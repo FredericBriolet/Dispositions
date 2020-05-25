@@ -29,9 +29,49 @@
 			left: 0;
 		 	z-index: 0;
 		 	outline: none;
+
+			display: none;
 		}
+
+		body.started canvas {
+			display: block;
+		}
+
+		.btn {
+			position: absolute;
+			width: auto;
+			height: auto;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			-webkit-appearance: none;
+			border: 1px solid white;
+			color: white;
+			outline: none;
+			cursor: pointer;
+			padding: 10px 20px;
+			background: black;
+			font-family: sans-serif;
+		}
+
+		.btn:hover {
+			color: beige;
+			border-color: beige;
+		}
+		.btn:active {
+			color: black;
+			border-color: beige;
+			background: beige;
+		}
+
+		body.started .btn {
+			display: none;
+		}
+
+
 	</style>
 	<body id="body">
+		<button class="btn">Start</button>
 
 		<script src="build/three.min.js"></script>
 		<script src="js/threex.keyboardstate.js"></script>
@@ -46,6 +86,7 @@
 			SEPARATION = 200,
 			AMOUNTX = 10,
 			AMOUNTY = 10,
+			isPlaying = false,
 
 			camera, light, scene, renderer, particle, lines, line, asteroides, shape, darkMaterial, sound1;
 
@@ -55,7 +96,6 @@
 			var keyboard= new THREEx.KeyboardState();
 
 			init();
-			animate();
 
 			function init() {
 
@@ -176,8 +216,6 @@
 				/*multiMaterial.needsUpdate = true;
 				darkMaterial.needsUpdate = true;
 				wireframeMaterial.needsUpdate = true;*/
-				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-				document.addEventListener('mousedown', onMouseDown, false);
 
 			// AUDIO
 			var Sound = function ( sources, radius, volume ) {
@@ -218,12 +256,23 @@
 				}
 
 			}
+
 			sound1 = new Sound( [ 'sounds/Dispositions.mp3' ], 275, 1 );
-			sound1.play();
+			document.querySelector('.btn').addEventListener('click', handleClickBtn, {passive: false});
 			
 			lines = 0;
 			renderer.autoClear = false;
 			} 
+
+			function handleClickBtn() {
+				animate();
+				sound1.play();
+				document.body.classList.add('started');
+				document.querySelector('.btn').removeEventListener('click', handleClickBtn, {passive: false});
+
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				document.addEventListener('mousedown', onMouseDown, false);
+			}
 
 			// ENDINIT //////////////////
 
